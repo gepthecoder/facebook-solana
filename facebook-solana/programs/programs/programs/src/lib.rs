@@ -2,6 +2,7 @@ use anchor_lang::prelude::*;
 
 declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 
+
 #[program]
 pub mod programs {
     use super::*;
@@ -32,6 +33,13 @@ pub struct CreateState<'info> {
     // Token program
     #[account(constraint = token_program.key == &token::ID)]
     pub token_program: Program<'info, Token>,
+}
+
+#[account]
+pub struct StateAccount {
+    pub authority: Pubkey,
+
+    pub post_count: u64,
 }
 
 // Post Account Structure
