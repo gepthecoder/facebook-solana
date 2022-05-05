@@ -8,9 +8,39 @@ const USER_URL_LENGTH: usize = 255;
 
 #[program]
 pub mod programs {
-    use super::*;
+    use super::*; //the scope is everything 
 
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
+    pub fn create_state(
+        ctx: Context<CreateState>, // everytime you create a function you put ctx and then content
+        ) -> Result<()> {
+        let state = &mut ctx.accounts.state; // &mut -> so we can change the authority value
+
+        state.authority = ctx.accounts.authority.key(); // make it the current authority - user who is loged in with wallet
+
+        state.post_count = 0;
+
+        Ok(()) // if this functions gets called there were no errors
+    }
+
+    pub fn create_post(
+        ctx: Context<CreatePost>,
+        text: String,
+        poster_name: String,
+        poster_url: String,
+    ) -> Result<()>{
+        let state = &mut ctx.accounts.state;
+
+        let post = &mut ctx.accounts.post;
+        post.authority = ctx.accounts.authority.key();
+        post.text = text;
+        post.poster_name = poster_name;
+        post.poster_url = poster_url;
+        post.comment_count = 0;
+        post.index = state.post_count;
+        post.post_time = ctx.accounts.clock.unix_timestamp;
+
+        state.post_count += 1; // for keeping track of post
+
         Ok(())
     }
 }
